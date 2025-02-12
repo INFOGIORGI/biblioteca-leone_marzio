@@ -1,20 +1,17 @@
-from flask import Flask, render_template, url_for
+from flask import Flask,render_template
+from db import DB #importo la classe DB
 
 app = Flask(__name__)
+db = DB() #creo un oggetto della classe DB con il costruttore che crea le tabelle se già non esistono
 
-users = ['Alice', 'Bob', 'Charlie'] 
+
 
 @app.route("/")
 def hello():
+    db = DB() #creo un oggetto della classe db con il costruttore che crea le tabelle se già non esistono
     return render_template("index.html", message='Ciao mondo!!')
 
-@app.route("/users")
-def user():
-    return render_template('users.html', users=users)
 
-@app.route("/user/<utente>")
-def utente(utente):
-    return render_template('profile.html', utente=utente)
 
 
 app.run(debug=True)
