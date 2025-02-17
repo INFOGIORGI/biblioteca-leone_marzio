@@ -1,0 +1,3 @@
+libri per fila: 20
+file per scaffale: 6
+scaffali:  

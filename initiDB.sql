@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS  Libri(
     ISBN CHAR(13) PRIMARY KEY,
     Titolo VARCHAR(32) NOT NULL,
     Categoria VARCHAR(32) NOT NULL,
-    NumCopie INT NOT NULL
+    NumCopie INT DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS  Autorato(
@@ -65,11 +65,19 @@ CREATE TABLE IF NOT EXISTS  Tessera(
     CF CHAR(16) PRIMARY KEY,
     Nprestiti INT NOT NULL,
     DataScadenza DATE NOT NULL,
-    username VARCHAR(32) NOT NULL,
+    Username VARCHAR(32) NOT NULL,
     Pwd VARCHAR(32) NOT NULL,
     IsAdmin TINYINT(1) NOT NULL,
 
     FOREIGN KEY (CF) REFERENCES Utenti(CF)
+);
+
+CREATE TABLE IF NOT EXIST Full(
+    Identificatore VARCHAR(32) NOT NULL,
+    NumeroScaffale INT NOT NULL,
+    NumeroFila INT DEFAULT -1,
+    PRIMARY KEY(NumeroFila, NumeroScaffale),
+
 );
 
 -- Tabella Autori
