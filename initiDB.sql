@@ -1,10 +1,11 @@
+DROP TABLE IF EXISTS Tessera;
+DROP TABLE IF EXISTS Prestiti;
+DROP TABLE IF EXISTS Inventario;
+DROP TABLE IF EXISTS Utenti;
+DROP TABLE IF EXISTS Autorato;
 DROP TABLE IF EXISTS Autori;
 DROP TABLE IF EXISTS Libri;
-DROP TABLE IF EXISTS Autorato;
-DROP TABLE IF EXISTS Utenti;
-DROP TABLE IF EXISTS Inventario;
-DROP TABLE IF EXISTS Prestiti;
-DROP TABLE IF EXISTS Tessera;
+
 
 CREATE TABLE IF NOT EXISTS Autori(
     ISNI CHAR(16) PRIMARY KEY,
@@ -72,13 +73,6 @@ CREATE TABLE IF NOT EXISTS  Tessera(
     FOREIGN KEY (CF) REFERENCES Utenti(CF)
 );
 
-CREATE TABLE IF NOT EXIST Full(
-    Identificatore VARCHAR(32) NOT NULL,
-    NumeroScaffale INT NOT NULL,
-    NumeroFila INT DEFAULT -1,
-    PRIMARY KEY(NumeroFila, NumeroScaffale),
-
-);
 
 -- Tabella Autori
 INSERT INTO Autori (ISNI, Nome, Cognome, DataNascita, DataMorte)
