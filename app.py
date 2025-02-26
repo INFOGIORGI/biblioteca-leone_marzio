@@ -1,36 +1,54 @@
-from flask import Flask,render_template
+from flask import Flask, request, render_template, redirect, url_for
 from flask_mysqldb import MySQL
 import db
 
-
-
 app = Flask(__name__)
-app.config['MYSQL_HOST']="138.41.20.102"
-app.config['MYSQL_PORT']=53306
-app.config['MYSQL_USER']="5di"
-app.config['MYSQL_PASSWORD']="colazzo"
-app.config['MYSQL_DB']="leone_marzio"
-mysql= MySQL(app)
+app.config['MYSQL_HOST'] = "138.41.20.102"
+app.config['MYSQL_PORT'] = 53306
+app.config['MYSQL_USER'] = "5di"
+app.config['MYSQL_PASSWORD'] = "colazzo"
+app.config['MYSQL_DB'] = "leone_marzio"
+mysql = MySQL(app)
 
-@app.route("/")
-def hello():
-    return render_template("index.html", message='Ciao mondo!!')
+@app.route('/')
+def home():
+    libri = db.getLibri(mysql, '')
+    return render_template('index.html', libri=libri)
 
+@app.route('/librarian', methods=['GET', 'POST'])
+def librarian():
+    if request.method == 'POST':
+        ISBN = request.form['ISBN']
+        titolo = request.form['titolo']
+        categoria = request.form['categoria']
+        x = request.form['x']
+        y = request.form['y']
+        z = request.form['z']
+        db.addLibro(mysql, ISBN, titolo, categoria, x, y, z)
+        return redirect(url_for('home'))
+    
+    return render_template('librarian.html')
 
-# with app.app_context():
-#     print(db.getLibri(mysql, "888"))
+@app.route('/users')
+def users():
+    genere = request.args.get('genere', '')
+    ordina = request.args.get('ordina', '')  # "titolo" o "autore"
 
-# dati=((1,), (3,), (2,))
-# print(max(dati)[0])
+    # Recupera libri in base al genere
+    if genere:
+        libri = db.getLibriPerGenere(mysql, genere)
+        numero_libri = db.getStatisticheGenere(mysql, genere)
+    else:
+        libri = db.getLibri(mysql, "")
+        numero_libri = None
 
-# with app.app_context():
-#     db.addLibro(mysql,"0123456789111", "mambita", "soreta", 2,3,6)
-#     db.addLibro(mysql,"0123456789111", "mambita", "soreta", 9,0,1)
-#     db.addLibro(mysql,"0123456789111", "mambita", "soreta", 5,1,1)
+    # Ordina i libri se richiesto (titolo o autore)
+    if ordina == "titolo":
+        libri = db.ordinaLibri(mysql, tipo=True)  # Ordinamento per titolo
+    elif ordina == "autore":
+        libri = db.ordinaLibri(mysql, tipo=False)  # Ordinamento per autore
 
-with app.app_context():
-    print(db.getLibri(mysql, " "))
-    print(db.ordinaLibri(mysql, True))
+    return render_template('users.html', libri=libri, numero_libri=numero_libri, genere_selezionato=genere, ordina=ordina)
 
-
-app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)

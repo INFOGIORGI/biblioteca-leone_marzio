@@ -8,6 +8,7 @@ nFile=6
 nScaffali=16
 nScaffaliPerCat=2
 
+
 def addLibro(mysql,ISBN,titolo, categoria, x, y, z):
     cursor = mysql.connection.cursor()
     query = '''SELECT * FROM Libri WHERE ISBN=%s'''
@@ -42,33 +43,53 @@ def addLibro(mysql,ISBN,titolo, categoria, x, y, z):
 
 
 def getLibri(mysql, parolaChiave):
-    query="SELECT * FROM Libri WHERE Titolo LIKE %s OR ISBN LIKE %s OR Categoria LIKE %s"
-    cursor=mysql.connection.cursor()
-    parolaChiave="%"+parolaChiave+"%"
-    cursor.execute(query,(parolaChiave,parolaChiave,parolaChiave))
-    titoli=cursor.fetchall()
+    query = "SELECT ISBN, Titolo, Categoria, NumCopie FROM Libri WHERE Titolo LIKE %s OR ISBN LIKE %s OR Categoria LIKE %s"
+    cursor = mysql.connection.cursor()
+    parolaChiave = "%" + parolaChiave + "%"
+    cursor.execute(query, (parolaChiave, parolaChiave, parolaChiave))
+    titoli = cursor.fetchall()
+    
+    libri_con_autori = []
+    for titolo in titoli:
+        ISBN = titolo[0]
+        autori = getAutoriPerISBN(mysql, ISBN)
+        libri_con_autori.append({
+            'ISBN': ISBN,
+            'Titolo': titolo[1],
+            'Categoria': titolo[2],
+            'NumCopie': titolo[3],
+            'Autori': autori
+        })
+    
+    cursor.close()
+    return libri_con_autori
 
-    return titoli
+
 
 def ordinaLibri(mysql, tipo):
-    query="SELECT * FROM Libri"
-    cursor=mysql.connection.cursor()
+    query = "SELECT ISBN, Titolo, Categoria, NumCopie FROM Libri"
+    cursor = mysql.connection.cursor()
     cursor.execute(query)
-    libri=cursor.fetchall()
-    query="SELECT * FROM Autorato"
-    cursor=mysql.connection.cursor()
-    cursor.execute(query)
-    autorato=cursor.fetchall()
-    if(tipo):
-        return sorted(libri, key=lambda x: x[1])
-    autoriOrdinati=[]
+    libri = cursor.fetchall()
+
+    libri_con_autori = []
     for libro in libri:
-        autori=list(getAutoriPerISBN(mysql, libro[0]))
-        autori=sorted(autori)
-        for autore in autori:
-            autoriOrdinati.libro.append
+        ISBN = libro[0]
+        autori = getAutoriPerISBN(mysql, ISBN)
+        libri_con_autori.append({
+            'ISBN': ISBN,
+            'Titolo': libro[1],
+            'Categoria': libro[2],
+            'NumCopie': libro[3],
+            'Autori': autori
+        })
     
-    return 
+    cursor.close()
+    
+    if tipo:
+        return sorted(libri_con_autori, key=lambda x: x['Titolo'])
+    return sorted(libri_con_autori, key=lambda x: x['Autori'])
+
 
 
 def getAutoriPerISBN(mysql, ISBN):
@@ -79,6 +100,45 @@ def getAutoriPerISBN(mysql, ISBN):
         WHERE ISBN = %s
         """
     cursor=mysql.connection.cursor()
-    cursor.execute(query)
+    cursor.execute(query, (ISBN,))
     autori=cursor.fetchall()
     return tuple(f"{autore[0]} {autore[1]}" for autore in autori)
+
+
+def getLibriPerGenere(mysql, genere):
+
+    query = "SELECT ISBN, Titolo, Categoria, NumCopie FROM Libri WHERE Categoria = %s"
+    cursor = mysql.connection.cursor()
+    cursor.execute(query, (genere,))
+    libri = cursor.fetchall()
+    cursor.close()
+    
+    libri_con_autori = []
+    for libro in libri:
+        ISBN = libro[0]
+        autori = getAutoriPerISBN(mysql, ISBN)
+        libri_con_autori.append({
+            'ISBN': ISBN,
+            'Titolo': libro[1],
+            'Categoria': libro[2],
+            'NumCopie': libro[3],
+            'Autori': ', '.join(autori)
+        })
+    
+    return libri_con_autori
+
+
+def getStatisticheGenere(mysql, genere):
+    query = "SELECT Categoria FROM Libri WHERE Categoria = %s"
+    cursor = mysql.connection.cursor()
+    cursor.execute(query, (genere, ))
+    generi = cursor.fetchall()
+
+    return len(generi)
+
+
+
+
+
+
+        
