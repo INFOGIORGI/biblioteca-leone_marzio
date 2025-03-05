@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, session
 from flask_mysqldb import MySQL
 import db
 
@@ -49,6 +49,28 @@ def users():
         libri = db.ordinaLibri(mysql, tipo=False)  # Ordinamento per autore
 
     return render_template('users.html', libri=libri, numero_libri=numero_libri, genere_selezionato=genere, ordina=ordina)
+
+
+@app.route('/register')
+def register():
+    session['message'] = "Enter your username to continue."
+    if request.method == 'POST':
+        username = request.form['username']
+        session['user'] = username
+        session['greet'] = f"Successfully registered username - {session['user']}."
+        return redirect(url_for("home"))
+ 
+    return render_template('register.html')
+
+@app.route('/login')
+def logIn():
+
+    return render_template('login.html')
+
+@app.route('/logout')
+def logOut():
+
+    return render_template('logout.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

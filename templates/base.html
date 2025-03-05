@@ -18,6 +18,15 @@
             </ul>
         </div>
     </nav>
+    
+    <div class="auth-buttons text-right mt-3">
+        {% if not session['user'] %}
+            <a href="/register" class="btn btn-primary mr-2">Register</a>
+            <a href="/login" class="btn btn-secondary">Log In</a>
+        {% else %}
+            <a href="/logout" class="btn btn-danger">Log Out</a>
+        {% endif %}
+    </div>
 
     <div class="container mt-3">
         {% block content %}{% endblock %}
