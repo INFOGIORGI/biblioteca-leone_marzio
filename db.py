@@ -1,3 +1,6 @@
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 nLibri=20
 nFile=6
 nScaffali=16
@@ -96,7 +99,36 @@ def getStatisticheGenere(mysql, genere):
 
     return len(generi)
 
+def registraUtente(mysql, nome, cognome, CF, email, telefono, username, password):
+    query="SELECT * FROM Utenti WHERE CF = %s"
+    cursor=mysql.connection.cursor()
+    cursor.execute(query, (CF, ))
+    if cursor.fetchall():
+        return False
+    query="INSERT INTO Utenti (CF, Nome, Cognome, Email, Telefono) VALUES (%s, %s, %s, %s, %s)"
+    cursor.execute(query, (CF, nome, cognome, email, telefono))
+    query="INSERT INTO Tessera (CF, Nprestiti, DataScadenza, username, Pwd, IsAdmin) VALUES (%s, %s, %s, %s, %s, %s)"
+    cursor.execute(query, (CF, 0, datetime.now()+relativedelta(months=1), username, password, 0))
+    mysql.connection.commit()
+    return True
 
+def getHashedPw(mysql, username):
+    query="SELECT * FROM Tessera WHERE Username = %s"
+    cursor=mysql.connection.cursor()
+    cursor.execute(query, (username, ))
+    if cursor.fetchall()=="":
+        return 0
+    query="SELECT DataScadenza from Tessera WHERE Username=%s"
+    cursor=mysql.connection.cursor()
+    cursor.execute(query, (username, ))
+    utente= cursor.fetchall()
+    if utente[0][0]<datetime.now().date():
+        return 2
+    query="SELECT Pwd from Tessera WHERE Username=%s"
+    cursor=mysql.connection.cursor()
+    cursor.execute(query, (username, ))
+    return cursor.fetchall()[0][0]
+    
 
 
 

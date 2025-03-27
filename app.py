@@ -1,5 +1,7 @@
 from flask import Flask, request, render_template, redirect, url_for, session, flash
 from flask_mysqldb import MySQL
+from datetime import timedelta
+import bcrypt
 import db
 import os
 
@@ -11,9 +13,11 @@ app.config['MYSQL_PASSWORD'] = "colazzo"
 app.config['MYSQL_DB'] = "leone_marzio"
 mysql = MySQL(app)
 
-
 # Genera una secret key casuale (consigliato):
 app.config['SECRET_KEY'] = os.urandom(24)
+
+app.permanent_session_lifetime = timedelta(days=30) # Session Life Time
+app.config['SESSION_TYPE'] = "filesystem"  # Session Storage Type
 
 @app.route('/')
 def home():
@@ -37,7 +41,7 @@ def librarian():
         elif ritorno==2:
             flash("il libro è stato memorizzato per la prima volta")
         
-        return redirect(url_for('home'))
+        return redirect(url_for('librarian'))
     
     return render_template('librarian.html')
 
@@ -63,19 +67,36 @@ def users():
     return render_template('users.html', libri=libri, numero_libri=numero_libri, genere_selezionato=genere, ordina=ordina)
 
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    session['message'] = "Enter your username to continue."
     if request.method == 'POST':
         username = request.form['username']
-        session['user'] = username
-        session['greet'] = f"Successfully registered username - {session['user']}."
+        cf=request.form['CF']
+        if db.registraUtente(mysql, request.form['nome'], request.form['cognome'], cf, request.form['email'], request.form['telefono'], username, bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())):
+            session['user'] = username
+            session['message'] = f"Successfully registered username - {session['user']}."
+        else:
+            session['message']=f"L'utente con codice fiscale: {cf} è già registrato."
+            return redirect(url_for("register"))
         return redirect(url_for("home"))
- 
     return render_template('register.html')
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def logIn():
+    if request.method=="POST":
+        username=request.form['username']
+        risultato=db.getHashedPw(mysql, username)
+        if risultato==0: session["message"]=f"L'username {username} non esiste"
+        elif risultato==2: 
+            session["message"]=f"La tessera è scaduta, rivolgersi al bibliotecario per rinnovarla"
+        else:
+            if bcrypt.checkpw(request.form['password'].encode('utf-8'), risultato.encode('utf-8')):
+                session['user']=username
+                session['message']=f"log in avvenuto con successo, bentornato {username}"
+                return redirect(url_for("home"))
+            else:
+                session['message']=f"password errata"
+                return redirect(url_for("logIn"))
 
     return render_template('login.html')
 

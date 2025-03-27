@@ -12,28 +12,25 @@
     </ul>
   {% endif %}
 {% endwith %}
+    
     <h1 class="mb-4">Aggiungi un Libro</h1>
     <form method="POST" action="{{ url_for('librarian') }}" class="mb-3">
         <div class="form-group">
-            <input type="text" name="ISBN" class="form-control" placeholder="ISBN" required>
-        </div>
-        <div class="form-group">
-            <input type="text" name="titolo" class="form-control" placeholder="Titolo" required>
-        </div>
-        <div class="form-group">
-            <input type="text" name="categoria" class="form-control" placeholder="Categoria" required>
-        </div>
-        <div class="form-group">
-            <input type="text" name="autori" class="form-control" placeholder="Autori (separati da , )" required>
-        </div>
-        <div class="form-group">
-            <input type="text" name="x" class="form-control" placeholder="X" required>
-        </div>
-        <div class="form-group">
-            <input type="text" name="y" class="form-control" placeholder="Y" required>
-        </div>
-        <div class="form-group">
-            <input type="text" name="z" class="form-control" placeholder="Z" required>
+            <input type="text" name="ISBN" class="form-control" placeholder="ISBN" required><br>
+
+            <input type="text" name="titolo" class="form-control" placeholder="Titolo" required><br>
+
+            <input type="text" name="categoria" class="form-control" placeholder="Categoria" required><br>
+
+            <input type="text" name="autori" class="form-control" placeholder="Autori (separati da , )" required><br>
+
+            <input type="text" name="x" class="form-control" placeholder="X" required><br>
+
+
+            <input type="text" name="y" class="form-control" placeholder="Y" required><br>
+
+
+            <input type="text" name="z" class="form-control" placeholder="Z" required><br>
         </div>
 
         <button type="submit" class="btn btn-primary">Aggiungi</button>
