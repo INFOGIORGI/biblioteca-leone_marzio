@@ -1,6 +1,7 @@
-from flask import Flask, request, render_template, redirect, url_for, session
+from flask import Flask, request, render_template, redirect, url_for, session, flash
 from flask_mysqldb import MySQL
 import db
+import os
 
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = "138.41.20.102"
@@ -9,6 +10,10 @@ app.config['MYSQL_USER'] = "5di"
 app.config['MYSQL_PASSWORD'] = "colazzo"
 app.config['MYSQL_DB'] = "leone_marzio"
 mysql = MySQL(app)
+
+
+# Genera una secret key casuale (consigliato):
+app.config['SECRET_KEY'] = os.urandom(24)
 
 @app.route('/')
 def home():
@@ -21,10 +26,17 @@ def librarian():
         ISBN = request.form['ISBN']
         titolo = request.form['titolo']
         categoria = request.form['categoria']
+        autori = request.form['autori']
         x = request.form['x']
         y = request.form['y']
         z = request.form['z']
-        db.addLibro(mysql, ISBN, titolo, categoria, x, y, z)
+        ritorno=db.addLibro(mysql, ISBN, titolo, categoria,autori, x, y, z)
+        if ritorno==0:
+            flash("Esiste già un libro in questa posizione")
+            return redirect(url_for('librarian'))
+        elif ritorno==2:
+            flash("il libro è stato memorizzato per la prima volta")
+        
         return redirect(url_for('home'))
     
     return render_template('librarian.html')
@@ -44,9 +56,9 @@ def users():
 
     # Ordina i libri se richiesto (titolo o autore)
     if ordina == "titolo":
-        libri = db.ordinaLibri(mysql, tipo=True)  # Ordinamento per titolo
+        libri = db.ordinaLibri(libri, tipo=True)  # Ordinamento per titolo
     elif ordina == "autore":
-        libri = db.ordinaLibri(mysql, tipo=False)  # Ordinamento per autore
+        libri = db.ordinaLibri(libri, tipo=False)  # Ordinamento per autore
 
     return render_template('users.html', libri=libri, numero_libri=numero_libri, genere_selezionato=genere, ordina=ordina)
 

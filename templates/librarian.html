@@ -3,6 +3,15 @@
 {% block title %}Aggiungi Libro{% endblock %}
 
 {% block content %}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul>
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
     <h1 class="mb-4">Aggiungi un Libro</h1>
     <form method="POST" action="{{ url_for('librarian') }}" class="mb-3">
         <div class="form-group">
@@ -15,6 +24,9 @@
             <input type="text" name="categoria" class="form-control" placeholder="Categoria" required>
         </div>
         <div class="form-group">
+            <input type="text" name="autori" class="form-control" placeholder="Autori (separati da , )" required>
+        </div>
+        <div class="form-group">
             <input type="text" name="x" class="form-control" placeholder="X" required>
         </div>
         <div class="form-group">
@@ -23,6 +35,7 @@
         <div class="form-group">
             <input type="text" name="z" class="form-control" placeholder="Z" required>
         </div>
+
         <button type="submit" class="btn btn-primary">Aggiungi</button>
     </form>
 {% endblock %}
