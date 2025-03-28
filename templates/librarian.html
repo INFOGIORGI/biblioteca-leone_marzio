@@ -12,7 +12,7 @@
     </ul>
   {% endif %}
 {% endwith %}
-    
+{% if session['isAdmin'] %}
     <h1 class="mb-4">Aggiungi un Libro</h1>
     <form method="POST" action="{{ url_for('librarian') }}" class="mb-3">
         <div class="form-group">
@@ -35,4 +35,8 @@
 
         <button type="submit" class="btn btn-primary">Aggiungi</button>
     </form>
+{%else%}
+  <h1 class="mb-4">Pagina non permessa per chi non è Admin</h1>
+{%endif%}
+    
 {% endblock %}

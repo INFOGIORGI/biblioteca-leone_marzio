@@ -17,15 +17,16 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="/librarian">Aggiungi Libro</a></li>
-                <li class="nav-item"><a class="nav-link" href="/users">Utenti</a></li>
+                {%if session['isAdmin'] %} <li class="nav-item"><a class="nav-link" href="/librarian">Bibliotecario</a></li>
+                {% elif session['user'] %}<li class="nav-item"><a class="nav-link" href="/users">Utenti</a></li>
+                {% endif %}
             </ul>
             <div class="auth-buttons">
                 {% if not session['user'] %}
                     <a href="/register" class="btn btn-primary me-2">Register</a>
                     <a href="/login" class="btn btn-secondary" style="margin-right: 10px;">Log In</a>
                 {% else %}
-                    <a href="/logout" class="btn btn-danger" style="margin-right: 10px;">Log Out</a>
+                    <a href="{{url_for('logOut')}}" class="btn btn-danger" style="margin-right: 10px;">Log Out</a>
                 {% endif %}
             </div>
         </div>

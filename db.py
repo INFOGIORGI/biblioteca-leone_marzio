@@ -129,7 +129,13 @@ def getHashedPw(mysql, username):
     cursor.execute(query, (username, ))
     return cursor.fetchall()[0][0]
     
-
+def isAdmin(mysql, username):
+    query="SELECT IsAdmin FROM Tessera WHERE Username= %s"
+    cursor=mysql.connection.cursor()
+    cursor.execute(query, (username, ))
+    if cursor.fetchall()[0][0]:
+        return True
+    return False
 
 
 

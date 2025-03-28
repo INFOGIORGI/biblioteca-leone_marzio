@@ -75,6 +75,7 @@ def register():
         if db.registraUtente(mysql, request.form['nome'], request.form['cognome'], cf, request.form['email'], request.form['telefono'], username, bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())):
             session['user'] = username
             session['message'] = f"Successfully registered username - {session['user']}."
+            session['isAdmin'] = False
         else:
             session['message']=f"L'utente con codice fiscale: {cf} è già registrato."
             return redirect(url_for("register"))
@@ -92,7 +93,11 @@ def logIn():
         else:
             if bcrypt.checkpw(request.form['password'].encode('utf-8'), risultato.encode('utf-8')):
                 session['user']=username
-                session['message']=f"log in avvenuto con successo, bentornato {username}"
+                session['message']=f"Log in avvenuto con successo, bentornato {username}"
+                if db.isAdmin(mysql, username):
+                    session['isAdmin']=True
+                else:
+                    session['isAdmin']=False
                 return redirect(url_for("home"))
             else:
                 session['message']=f"password errata"
@@ -102,8 +107,10 @@ def logIn():
 
 @app.route('/logout')
 def logOut():
-
-    return render_template('logout.html')
+    if 'user' in session:
+        session.pop('user')
+        session['message']="Log out effettuato con successo"
+    return redirect(url_for('home'))
 
 if __name__ == '__main__':
     app.run(debug=True)
