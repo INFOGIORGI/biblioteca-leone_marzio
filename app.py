@@ -115,7 +115,7 @@ def logIn():
     if request.method=="POST":
         username=request.form['username']
         risultato=db.getHashedPw(mysql, username)
-        if risultato==0: session["message"]=f"L'username {username} non esiste"
+        if risultato==0: flash(f"L'username {username} non esiste")
         elif risultato==2: 
             flash(f"La tessera è scaduta, rivolgersi al bibliotecario per rinnovarla")
         else:

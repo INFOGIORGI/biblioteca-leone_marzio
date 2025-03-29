@@ -108,18 +108,18 @@ def getHashedPw(mysql, username):
     query="SELECT * FROM Tessera WHERE Username = %s"
     cursor=mysql.connection.cursor()
     cursor.execute(query, (username, ))
-    if cursor.fetchall()=="":
-        return 0
-    query="SELECT DataScadenza from Tessera WHERE Username=%s"
-    cursor=mysql.connection.cursor()
-    cursor.execute(query, (username, ))
-    utente= cursor.fetchall()
-    if utente[0][0]<datetime.now().date():
-        return 2
-    query="SELECT Pwd from Tessera WHERE Username=%s"
-    cursor=mysql.connection.cursor()
-    cursor.execute(query, (username, ))
-    return cursor.fetchall()[0][0]
+    if cursor.fetchall():    
+        query="SELECT DataScadenza from Tessera WHERE Username=%s"
+        cursor=mysql.connection.cursor()
+        cursor.execute(query, (username, ))
+        utente= cursor.fetchall()
+        if utente[0][0]<datetime.now().date():
+            return 2
+        query="SELECT Pwd from Tessera WHERE Username=%s"
+        cursor=mysql.connection.cursor()
+        cursor.execute(query, (username, ))
+        return cursor.fetchall()[0][0]
+    return 0
     
 def isAdmin(mysql, username):
     query="SELECT IsAdmin FROM Tessera WHERE Username= %s"
