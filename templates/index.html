@@ -17,30 +17,37 @@
 <h1 class="mb-4">Lista dei Libri</h1>
 <ul class="list-group">
     {% for libro in libri %}
-        <li class="list-group-item">
-            <strong>{{ libro.Titolo }}</strong> - ISBN: {{ libro.ISBN }} - Genere: {{ libro.Categoria }} - Copie: {{ libro.NumCopie }} - Autori: {{ libro.Autori }}
-            <button class="btn btn-primary btn-sm float-end" data-bs-toggle="modal" data-bs-target="#modal-{{ libro.ISBN }}">Mostra Riassunto</button>
-
-            <div class="modal fade" id="modal-{{ libro.ISBN }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
+      <li class="list-group-item">
+        <!-- Sezione informazioni libro -->
+        <div>
+            <strong>{{ libro.Titolo }}</strong> - ISBN: {{ libro.ISBN }} - Genero: {{ libro.Categoria }} - Copie: {{ libro.NumCopie }} - Autori: {{ libro.Autori }}
+        </div>
+        
+        <!-- Bottone posizionato sotto -->
+        <div class="mt-2">
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-{{ libro.ISBN }}">
+                Mostra Riassunto
+            </button>
+        </div>
+    
+        <!-- Modale per il riassunto -->
+        <div class="modal fade" id="modal-{{ libro.ISBN }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
                 <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Riassunto di "{{ libro.Titolo }}"</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    {{ libro.Riassunto }}
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
-                  </div>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Riassunto di "{{ libro.Titolo }}"</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ libro.Riassunto }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                    </div>
                 </div>
-              </div>
             </div>
-            
-            
-            </p>
-        </li>
+        </div>
+    </li>
     {% endfor %}
 </ul>
 

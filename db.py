@@ -135,7 +135,7 @@ def rinnovaTessera(mysql, username):
     cursor.execute(query, (username,))
     if cursor.fetchall():
         query="UPDATE Tessera SET DataScadenza=%s WHERE Username=%s"
-        cursor.execute(query, (datetime.now().date(), username))
+        cursor.execute(query, (datetime.now()+relativedelta(months=2), username))
         mysql.connection.commit()
         return True #ritorno True se è andato a buon fine
 

@@ -49,6 +49,8 @@ def librarian():
             username=request.form['username']
             if not db.rinnovaTessera(mysql, username):
                 flash("Username inesistente")
+            else:
+                flash("Tessera aggiornata con successo")
             return redirect(url_for('librarian'))
         elif form_type == 'aggiunzione_prestito':
             x= request.form['x']
