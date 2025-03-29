@@ -4,15 +4,17 @@
 
 {% block content %}
 {% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul>
-      {% for message in messages %}
-        <li>{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+{% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
+      </div>
+    {% endfor %}
+{% endif %}
 {% endwith %}
 {% if session['isAdmin'] %}
+  <div class="container mt-5">
     <h1 class="mb-4">Aggiungi un Libro</h1>
     <form method="POST" action="{{ url_for('librarian') }}" class="mb-3">
         <div class="form-group">
@@ -31,10 +33,48 @@
 
 
             <input type="text" name="z" class="form-control" placeholder="Z" required><br>
-        </div>
+        
+            <input type="hidden" name="form_type" value="registrazione_utente">
+          </div>
 
         <button type="submit" class="btn btn-primary">Aggiungi</button>
     </form>
+  </div>
+
+    <div class="container mt-5">
+      <h1 class="mb-4">Rinnova Tessera</h1>
+  
+      <form method="POST" action="{{ url_for('librarian') }}" class="mb-3">
+          <div class="form-group">
+              <input type="text" name="username" class="form-control" placeholder="Username" required><br>
+              <input type="hidden" name="form_type" value="rinnovamento_tessera">
+            </div>
+  
+          <button type="submit" class="btn btn-primary">Rinnova Tessera</button>
+      </form>
+  </div>
+  <div class="container mt-5">
+    <h1 class="mb-4">Aggiungi Prestito</h1>
+
+    <form method="POST" action="{{ url_for('librarian') }}" class="mb-3">
+        <div class="form-group">
+            <input type="text" name="CF" class="form-control" placeholder="Codice Fiscale" required><br>
+
+            <input type="date" name="dataInizio" class="form-control" placeholder="Data Inizio Prestito" required><br>
+
+            <input type="date" name="dataScadenza" class="form-control" placeholder="Data Scadenza Prestito"><br>
+
+            <input type="number" name="x" class="form-control" placeholder="X" required>
+            <input type="number" name="y" class="form-control" placeholder="Y" required>
+            <input type="number" name="z" class="form-control" placeholder="Z" required><br>
+            
+            <input type="hidden" name="form_type" value="aggiunzione_prestito">
+          </div>
+
+        <button type="submit" class="btn btn-primary">Aggiungi Prestito</button>
+    </form>
+</div>
+
 {%else%}
   <h1 class="mb-4">Pagina non permessa per chi non è Admin</h1>
 {%endif%}

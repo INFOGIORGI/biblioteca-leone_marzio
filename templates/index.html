@@ -3,19 +3,45 @@
 {% block title %}Home - Biblioteca{% endblock %}
 
 {% block content %}
-{% if session['message'] %}
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-  {{ session['message'] }}
-  <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
-</div>
-{% endif %}
 
-    <h1 class="mb-4">Lista dei Libri</h1>
-    <ul class="list-group">
-        {% for libro in libri %}
-            <li class="list-group-item">
-                <strong>{{ libro.Titolo }}</strong> - ISBN: {{ libro.ISBN }} - Genere: {{ libro.Categoria }} - Copie: {{ libro.NumCopie }} - Autori: {{ libro.Autori }}
-            </li>
-        {% endfor %}
-    </ul>
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
+      </div>
+    {% endfor %}
+{% endif %}
+{% endwith %}
+<h1 class="mb-4">Lista dei Libri</h1>
+<ul class="list-group">
+    {% for libro in libri %}
+        <li class="list-group-item">
+            <strong>{{ libro.Titolo }}</strong> - ISBN: {{ libro.ISBN }} - Genere: {{ libro.Categoria }} - Copie: {{ libro.NumCopie }} - Autori: {{ libro.Autori }}
+            <button class="btn btn-primary btn-sm float-end" data-bs-toggle="modal" data-bs-target="#modal-{{ libro.ISBN }}">Mostra Riassunto</button>
+
+            <div class="modal fade" id="modal-{{ libro.ISBN }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Riassunto di "{{ libro.Titolo }}"</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    {{ libro.Riassunto }}
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            
+            </p>
+        </li>
+    {% endfor %}
+</ul>
+
 {% endblock %}

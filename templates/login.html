@@ -1,11 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
-  {% if session['message'] %}
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-      {{ session['message'] }}
-      <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
-    </div>
-  {% endif %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
+      </div>
+    {% endfor %}
+{% endif %}
+{% endwith %}
+
 <div class="container mt-5">
     <h1 class="mb-4">Log in</h1>
     <form method="POST" action="{{url_for('logIn')}}" class="mb-3">

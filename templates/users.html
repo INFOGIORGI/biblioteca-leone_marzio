@@ -7,6 +7,9 @@
     
     <form method="GET" action="{{ url_for('users') }}" class="mb-3">
         <div class="form-group">
+            <input type="text" name="key" class="form-control mb-2" placeholder="Titolo o ISBN" value="{{ key_selezionata }}">
+        </div>
+        <div class="form-group">
             <input type="text" name="genere" class="form-control mb-2" placeholder="Genere" value="{{ genere_selezionato }}">
         </div>
         <div class="form-group">
@@ -27,6 +30,24 @@
         {% for libro in libri %}
             <li class="list-group-item">
                 <strong>{{ libro.Titolo }}</strong> - ISBN: {{ libro.ISBN }} - Genere: {{ libro.Categoria }} - Copie: {{ libro.NumCopie }} - Autori: {{ libro.Autori }}
+                <button class="btn btn-primary btn-sm float-end" data-bs-toggle="modal" data-bs-target="#modal-{{ libro.ISBN }}">Mostra Riassunto</button>
+
+                    <div class="modal fade" id="modal-{{ libro.ISBN }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Riassunto di "{{ libro.Titolo }}"</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            {{ libro.Riassunto }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
             </li>
         {% endfor %}
     </ul>

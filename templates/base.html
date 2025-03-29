@@ -17,9 +17,9 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                {%if session['isAdmin'] %} <li class="nav-item"><a class="nav-link" href="/librarian">Bibliotecario</a></li>
-                {% elif session['user'] %}<li class="nav-item"><a class="nav-link" href="/users">Utenti</a></li>
-                {% endif %}
+                {%if session['isAdmin'] %} <li class="nav-item"><a class="nav-link" href="/librarian">Bibliotecario</a></li>{% endif %}
+                {%if session['user'] %}<li class="nav-item"><a class="nav-link" href="/users">Utenti</a></li>{% endif %}
+                
             </ul>
             <div class="auth-buttons">
                 {% if not session['user'] %}
