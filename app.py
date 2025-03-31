@@ -82,8 +82,37 @@ def librarian():
                 else:
                     flash("Codice fiscale inesistente")
             return redirect(url_for('librarian'))
+        elif form_type == 'rimozione_prestito':
+            IDL=request.form['IDL']
+            risultato=db.ritornaPrestito(mysql, IDL)
+            if risultato==2:
+                flash("Applicare sanzione per la tarda restituzione")
+            elif risultato==1:
+                flash("Libro restituito con successo")
+            elif risultato==0:
+                flash("IDL non in prestito")
+            return redirect(url_for('librarian'))
+            
     
     return render_template('librarian.html')
+
+    
+@app.route('/prestiti')
+def prestiti():
+    # Ottiene la lista dei prestiti ordinati per DataInizio
+    lista_prestiti = db.get_prestiti(mysql)
+    return render_template('prestiti.html', prestiti=lista_prestiti)
+
+@app.route('/restituisci', methods=['POST'])
+def restituisci():
+    # Legge i dati inviati dal form della modale
+    data_inizio = request.form.get('DataInizio')
+    cf = request.form.get('CF')
+    idl = request.form.get('IDL')
+    
+    # Aggiorna il prestito nel database: setta DataRestituzione a NOW()
+    db.restituisci_prestito(mysql, data_inizio, cf, idl)
+    return redirect(url_for('prestiti'))
 
 @app.route('/users')
 def users():

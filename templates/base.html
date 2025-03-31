@@ -20,6 +20,7 @@
           <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
           {% if session['isAdmin'] %}
             <li class="nav-item"><a class="nav-link" href="/librarian">Bibliotecario</a></li>
+            <li class="nav-item"><a class="nav-link" href="/storico">Storico</a></li>
           {% endif %}
           {% if session['user'] %}
             <li class="nav-item"><a class="nav-link" href="/users">Utenti</a></li>

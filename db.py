@@ -170,10 +170,69 @@ def aggiungiprestito(mysql, CF, dataInizio, dataScadenza , IDL):
         cursor.execute(query, (dataInizio, None, dataScadenza, CF, IDL))
         query="UPDATE Inventario SET isAvailable = 0 WHERE IDL = %s"
         cursor.execute(query, (IDL,))
-        mysql.connection.commit()
+        query='''SELECT ISBN FROM Inventario WHERE IDL = %s'''
+        cursor.execute(query, (IDL,))
+        ISBN=cursor.fetchall()
+        if ISBN:
+            query='''UPDATE Libri SET NumCopie = NumCopie-1 WHERE ISBN = %s'''
+            cursor.execute(query, (ISBN[0][0],))
+            mysql.connection.commit()
+        
         return True #ritorno True se è andato a buon fine
 
     return False #ritorno False se non esiste il CF
+
+def ritornaPrestito(mysql, IDL):
+    query="SELECT * FROM Prestiti WHERE IDL=%s"
+    cursor=mysql.connection.cursor()
+    cursor.execute(query, (IDL,))
+    risultato = cursor.fetchall()
+    ritorno=1
+    if risultato:
+        if risultato[0][2]>datetime.now().date():
+            ritorno=2
+        query="DELETE FROM Prestiti WHERE IDL=%s"
+        cursor.execute(query, IDL)
+        query="UPDATE Prestiti SET dataRestituzione = %s WHERE IDL=%s"
+        return ritorno
+    return 0
+
+def get_prestiti(mysql):
+    cursor = mysql.connection.cursor()
+    query = """
+        SELECT DataInizio, DataScadenza, CF, IDL, DataRestituzione
+        FROM Prestiti
+        ORDER BY DataInizio
+    """
+    cursor.execute(query)
+    risultati = cursor.fetchall()
+    cursor.close()
+    
+    # Mappiamo i risultati in una lista di dizionari
+    prestiti = []
+    for row in risultati:
+        prestito = {
+            'DataInizio': row[0],
+            'DataScadenza': row[1],
+            'CF': row[2],
+            'IDL': row[3],
+            'DataRestituzione': row[4]  # Può essere None se non ancora restituito
+        }
+        prestiti.append(prestito)
+    return prestiti
+
+def restituisci_prestito(mysql, data_inizio, cf, idl):
+    cursor = mysql.connection.cursor()
+    query = """
+        UPDATE Prestiti
+        SET DataRestituzione = NOW()
+        WHERE DataInizio = %s AND CF = %s AND IDL = %s
+    """
+    cursor.execute(query, (data_inizio, cf, idl))
+    mysql.connection.commit()
+    cursor.close()
+        
+
 
 def getIDL(mysql, x, y, z):
     query="SELECT IDL, isAvailable FROM Inventario WHERE x=%s AND y=%s AND z=%s"

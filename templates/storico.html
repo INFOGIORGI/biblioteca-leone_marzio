@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Storico Prestiti{% endblock %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
+      </div>
+    {% endfor %}
+{% endif %}
+{% endwith %}
+{% if session['isAdmin'] %}
+  <div class="container mt-5">
+    <h1 class="mb-4">Storico Prestiti</h1>
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+          <tr>
+            <th>Data Inizio</th>
+            <th>Data Scadenza</th>
+            <th>CF</th>
+            <th>IDL</th>
+            <th>Stato</th>
+            <th>Azioni</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for prestito in prestiti %}
+          <tr>
+            <td>{{ prestito.DataInizio }}</td>
+            <td>{{ prestito.DataScadenza }}</td>
+            <td>{{ prestito.CF }}</td>
+            <td>{{ prestito.IDL }}</td>
+            <td>
+              {% if prestito.DataRestituzione %}
+                <span class="text-success font-weight-bold">restituito</span>
+              {% else %}
+                <span class="text-danger font-weight-bold">ancora in corso</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if not prestito.DataRestituzione %}
+              <!-- Pulsante che apre la modale, passando i dati del prestito tramite data-* attributes -->
+              <button type="button" class="btn btn-primary btn-sm restituisci-btn"
+                data-toggle="modal" 
+                data-target="#confermaModal"
+                data-datainizio="{{ prestito.DataInizio }}"
+                data-cf="{{ prestito.CF }}"
+                data-idl="{{ prestito.IDL }}">
+                Restituisci
+              </button>
+              {% else %}
+                -
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modale per conferma restituzione -->
+  <div class="modal fade" id="confermaModal" tabindex="-1" role="dialog" aria-labelledby="confermaModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <form action="{{ url_for('restituisci') }}" method="post" id="restituisciForm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confermaModalLabel">Conferma Restituzione</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Chiudi">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Sei sicuro di voler restituire questo prestito?
+            <!-- I dati necessari per identificare il prestito verranno inseriti come campi hidden -->
+            <input type="hidden" name="DataInizio" id="modalDataInizio">
+            <input type="hidden" name="CF" id="modalCF">
+            <input type="hidden" name="IDL" id="modalIDL">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+            <button type="submit" class="btn btn-primary">Conferma</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bootstrap e dipendenze JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    // Quando viene aperta la modale, imposta i campi hidden con i dati del prestito
+    $('#confermaModal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget); // Bottone che ha aperto la modale
+      var dataInizio = button.data('datainizio');
+      var cf = button.data('cf');
+      var idl = button.data('idl');
+      
+      // Imposta i campi hidden nella modale
+      var modal = $(this);
+      modal.find('#modalDataInizio').val(dataInizio);
+      modal.find('#modalCF').val(cf);
+      modal.find('#modalIDL').val(idl);
+    });
+  </script>
+
+
+
+{%else%}
+<div class="container text-center mt-5">
+  <div class="card border-danger">
+      <div class="card-header bg-danger text-white">
+          Accesso Negato
+      </div>
+      <div class="card-body">
+          <h1 class="card-title">Pagina non permessa per chi non è Admin</h1>
+          <p class="card-text">
+              Solo gli amministratori possono accedere a questa sezione
+          </p>
+          <a href="/" class="btn btn-primary">Torna alla Home</a>
+      </div>
+  </div>
+</div>
+{%endif%}
+    
+{% endblock %}
