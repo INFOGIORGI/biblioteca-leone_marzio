@@ -1,41 +1,54 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Biblioteca{% endblock %}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Biblioteca{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
-<body class="container mt-4">
-
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="/" style="margin-left: 10px;">Biblioteca</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                {%if session['isAdmin'] %} <li class="nav-item"><a class="nav-link" href="/librarian">Bibliotecario</a></li>{% endif %}
-                {%if session['user'] %}<li class="nav-item"><a class="nav-link" href="/users">Utenti</a></li>{% endif %}
-                
-            </ul>
-            <div class="auth-buttons">
-                {% if not session['user'] %}
-                    <a href="/register" class="btn btn-primary me-2">Register</a>
-                    <a href="/login" class="btn btn-secondary" style="margin-right: 10px;">Log In</a>
-                {% else %}
-                    <a href="{{url_for('logOut')}}" class="btn btn-danger" style="margin-right: 10px;">Log Out</a>
-                {% endif %}
-            </div>
+<body class="d-flex flex-column min-vh-100">
+  <!-- Navbar con margini laterali -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <a class="navbar-brand" href="/">Biblioteca</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          {% if session['isAdmin'] %}
+            <li class="nav-item"><a class="nav-link" href="/librarian">Bibliotecario</a></li>
+          {% endif %}
+          {% if session['user'] %}
+            <li class="nav-item"><a class="nav-link" href="/users">Utenti</a></li>
+          {% endif %}
+        </ul>
+        <div class="auth-buttons">
+          {% if not session['user'] %}
+            <a href="/register" class="btn btn-primary me-2">Register</a>
+            <a href="/login" class="btn btn-secondary">Log In</a>
+          {% else %}
+            <a href="{{ url_for('logOut') }}" class="btn btn-danger">Log Out</a>
+          {% endif %}
         </div>
-    </nav>
-    
-
-    <div class="container mt-3">
-        {% block content %}{% endblock %}
+      </div>
     </div>
+  </nav>
 
+  <!-- Contenuto principale che occupa lo spazio residuo -->
+  <main class="flex-grow-1 container mt-3">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer sticky in fondo, con i margini laterali grazie al container -->
+  <footer class="mt-auto bg-light">
+    <div class="container text-center p-3">
+      <span>&copy; 2025 Biblioteca Leone Marzio</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

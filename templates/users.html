@@ -3,6 +3,7 @@
 {% block title %}Utenti - Biblioteca{% endblock %}
 
 {% block content %}
+{% if session['user'] %}
     <h1 class="mb-4">Cerca Libri</h1>
     
     <form method="GET" action="{{ url_for('users') }}" class="mb-3">
@@ -28,39 +29,55 @@
     <h2 class="mt-4">Risultati:</h2>
     <ul class="list-group">
         {% for libro in libri %}
-            <li class="list-group-item">
-                <!-- Sezione informazioni libro -->
-                <div>
-                    <strong>{{ libro.Titolo }}</strong> - ISBN: {{ libro.ISBN }} - Genero: {{ libro.Categoria }} - Copie: {{ libro.NumCopie }} - Autori: {{ libro.Autori }}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <!-- Informazioni libro -->
+            <div>
+              <strong>{{ libro.Titolo }}</strong> 
+              <span class="text-nowrap"> | ISBN: {{ libro.ISBN }} | </span>
+              <span class="text-nowrap">Genere: {{ libro.Categoria }}</span> 
+              <span class="text-nowrap"> | Copie: {{ libro.NumCopie }} | </span>
+              <span class="class="text-muted">Autori: {{ libro.Autori }}</span>
+            </div>
+      
+            <!-- Bottone per mostrare il riassunto -->
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-{{ libro.ISBN }}">
+              Riassunto
+            </button>
+          </li>
+      
+          <!-- Modale per il riassunto -->
+          <div class="modal fade" id="modal-{{ libro.ISBN }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Riassunto di "{{ libro.Titolo }}"</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                
-                <!-- Bottone posizionato sotto -->
-                <div class="mt-2">
-                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-{{ libro.ISBN }}">
-                        Mostra Riassunto
-                    </button>
+                <div class="modal-body">
+                  {{ libro.Riassunto }}
                 </div>
-            
-                <!-- Modale per il riassunto -->
-                <div class="modal fade" id="modal-{{ libro.ISBN }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Riassunto di "{{ libro.Titolo }}"</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                {{ libro.Riassunto }}
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
                 </div>
-            </li>
-        
-        
+              </div>
+            </div>
+          </div>
         {% endfor %}
-    </ul>
+      </ul>
+      {%else%}
+      <div class="container text-center mt-5">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                Accesso Negato
+            </div>
+            <div class="card-body">
+                <h1 class="card-title">Pagina non permessa per chi non è loggato</h1>
+                <p class="card-text">
+                    Solo gli utenti possono accedere a questa pagina
+                </p>
+                <a href="/" class="btn btn-primary">Torna alla Home</a>
+            </div>
+        </div>
+      </div>
+      {%endif%}
 {% endblock %}

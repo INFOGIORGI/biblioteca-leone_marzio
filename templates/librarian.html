@@ -17,36 +17,43 @@
   <div class="container mt-5">
     <h1 class="mb-4">Aggiungi un Libro</h1>
     <form method="POST" action="{{ url_for('librarian') }}" class="mb-3">
-        <div class="form-group">
-            <input type="text" name="ISBN" class="form-control" placeholder="ISBN" required><br>
+      <div class="form-group">
+          <input type="text" name="ISBN" class="form-control" placeholder="ISBN" minlength="13" maxlength="13" required><br>
+          <input type="text" name="titolo" class="form-control" placeholder="Titolo" minlength="2" maxlength="40" required><br>
+          <input type="text" name="categoria" class="form-control" placeholder="Categoria" minlength="2" maxlength="30" required><br>
+          <input type="text" name="autori" class="form-control" placeholder="Autori (separati da , )" minlength="2" maxlength="100"required><br>
+          <textarea name="riassunto" class="form-control" placeholder="Riassunto" required></textarea><br>
+          <input type="hidden" name="form_type" value="aggiunzione_libro">
 
-            <input type="text" name="titolo" class="form-control" placeholder="Titolo" required><br>
-
-            <input type="text" name="categoria" class="form-control" placeholder="Categoria" required><br>
-
-            <input type="text" name="autori" class="form-control" placeholder="Autori (separati da , )" required><br>
-
-            <input type="text" name="x" class="form-control" placeholder="X" required><br>
+      </div>
+      <button type="submit" class="btn btn-primary">Aggiungi Libro</button>
+  </form>
+</div>
 
 
-            <input type="text" name="y" class="form-control" placeholder="Y" required><br>
+<div class="container mt-5">
+  <h1 class="mb-4">Posiziona un Libro</h1>
+  <form method="POST" action="{{ url_for('librarian') }}" class="mb-3">
+    <div class="form-group">
+        <input type="text" name="ISBN" class="form-control" placeholder="ISBN" minlength="13" maxlength="13" required><br>
+        <input type="text" name="x" class="form-control" placeholder="X" minlength="1" maxlength="2"required><br>
+        <input type="text" name="y" class="form-control" placeholder="Y" minlength="1" maxlength="2" required><br>
+        <input type="text" name="z" class="form-control" placeholder="Z" minlength="1" maxlength="2" required><br>
+        <input type="hidden" name="form_type" value="posizionamento_libro">
 
+    </div>
+    <button type="submit" class="btn btn-primary">Posiziona Libro</button>
+  </form>
+</div>
+  
 
-            <input type="text" name="z" class="form-control" placeholder="Z" required><br>
-        
-            <input type="hidden" name="form_type" value="registrazione_utente">
-          </div>
-
-        <button type="submit" class="btn btn-primary">Aggiungi</button>
-    </form>
-  </div>
 
     <div class="container mt-5">
       <h1 class="mb-4">Rinnova Tessera</h1>
   
       <form method="POST" action="{{ url_for('librarian') }}" class="mb-3">
           <div class="form-group">
-              <input type="text" name="username" class="form-control" placeholder="Username" required><br>
+              <input type="text" name="username" class="form-control" placeholder="Username" minlength="3" maxlength="30"required><br>
               <input type="hidden" name="form_type" value="rinnovamento_tessera">
             </div>
   
@@ -58,15 +65,15 @@
 
     <form method="POST" action="{{ url_for('librarian') }}" class="mb-3">
         <div class="form-group">
-            <input type="text" name="CF" class="form-control" placeholder="Codice Fiscale" required><br>
+            <input type="text" name="CF" class="form-control" placeholder="Codice Fiscale" minlength="16" maxlength="16" required><br>
 
             <input type="date" name="dataInizio" class="form-control" placeholder="Data Inizio Prestito" required><br>
 
             <input type="date" name="dataScadenza" class="form-control" placeholder="Data Scadenza Prestito"><br>
 
-            <input type="number" name="x" class="form-control" placeholder="X" required>
-            <input type="number" name="y" class="form-control" placeholder="Y" required>
-            <input type="number" name="z" class="form-control" placeholder="Z" required><br>
+            <input type="number" name="x" class="form-control" placeholder="X" minlength="1" maxlength="2" required>
+            <input type="number" name="y" class="form-control" placeholder="Y" minlength="1" maxlength="2" required>
+            <input type="number" name="z" class="form-control" placeholder="Z" minlength="1" maxlength="2" required><br>
             
             <input type="hidden" name="form_type" value="aggiunzione_prestito">
           </div>
@@ -76,7 +83,20 @@
 </div>
 
 {%else%}
-  <h1 class="mb-4">Pagina non permessa per chi non è Admin</h1>
+<div class="container text-center mt-5">
+  <div class="card border-danger">
+      <div class="card-header bg-danger text-white">
+          Accesso Negato
+      </div>
+      <div class="card-body">
+          <h1 class="card-title">Pagina non permessa per chi non è Admin</h1>
+          <p class="card-text">
+              Solo gli amministratori possono accedere a questa sezione
+          </p>
+          <a href="/" class="btn btn-primary">Torna alla Home</a>
+      </div>
+  </div>
+</div>
 {%endif%}
     
 {% endblock %}

@@ -10,25 +10,36 @@ nScaffaliPerCat=2
 
 
 
-def addLibro(mysql,ISBN,titolo, categoria,autori, x, y, z):
+def addLibro(mysql,ISBN,titolo, categoria,autori, riassunto):
     cursor = mysql.connection.cursor()
     query = '''SELECT * FROM Libri WHERE ISBN=%s'''
     cursor.execute(query,(ISBN,))
     dati = cursor.fetchall()
-    ritorno=1
-    if len(dati)==0:
-        query = '''INSERT INTO Libri(ISBN, Titolo, Categoria, NumCopie, Autori) value(%s,%s,%s,0,%s)'''
-        cursor.execute(query,(ISBN,titolo, categoria, autori))
-        mysql.connection.commit()
-        ritorno=2 #torna 2 se l'ISBN non esiste e bisogna creare un nuovo libro
 
+    if len(dati)!=0:
+        return False
+    
+    query = '''INSERT INTO Libri(ISBN, Titolo, Categoria, NumCopie, Autori, Riassunto) value(%s,%s,%s,0,%s,%s)'''
+    cursor.execute(query,(ISBN,titolo, categoria, autori, riassunto))
+    mysql.connection.commit()
+    return  True
+
+
+def posizionaLibro(mysql, ISBN, x, y, z):
     query='''SELECT * FROM Inventario WHERE x = %s AND y = %s AND z=%s'''
+    cursor = mysql.connection.cursor()
     cursor.execute(query,( x, y, z))
     dati = cursor.fetchall()
 
     if len(dati)!=0:
         return 0
 
+    query='''SELECT * FROM Libri WHERE ISBN =%s'''
+    cursor.execute(query,(ISBN, ))
+    dati = cursor.fetchall()
+
+    if len(dati)==0:
+        return 2
 
     query='''INSERT INTO Inventario(ISBN,x,y,z) value(%s,%s,%s,%s)'''
     cursor.execute(query,(ISBN, x, y, z))
@@ -36,10 +47,7 @@ def addLibro(mysql,ISBN,titolo, categoria,autori, x, y, z):
     cursor.execute(query,(ISBN,))
     mysql.connection.commit()
     cursor.close()
-    return ritorno
-
-
-
+    return 1
 
 def getLibriPerKey(mysql, parolaChiave, genere):
     cursor = mysql.connection.cursor()
@@ -74,14 +82,25 @@ def getLibriPerKey(mysql, parolaChiave, genere):
 
 
 def ordinaLibri(libri, tipo):
-    
     if tipo:
+        # Ordina per Titolo
         return sorted(libri, key=lambda x: x['Titolo'])
-    return sorted(libri, key=lambda x: x['Autori'])
+    else:
+        # Ordina per tutti gli autori (alfabeticamente)
+        libri_ordinati=[]
+        for libro in libri:
+            libro['Autori']=libro['Autori'].split(', ')
+            libro['Autori'].sort()
+            libro['Autori'] = ', '.join(libro['Autori'])
+            libri_ordinati.append(libro)
+        
+        return sorted(libri_ordinati, key=lambda x: sorted(x['Autori']))
 
 
 
-def getStatisticheGenere(mysql, genere):
+
+
+def getStatisticheGenere(mysql, genere):  
     if genere:
         query = "SELECT Categoria FROM Libri WHERE Categoria = %s"
         cursor = mysql.connection.cursor()

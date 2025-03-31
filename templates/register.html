@@ -17,21 +17,21 @@
        
     <form method="POST" action="{{url_for('register')}}" class="mb-3">
         <div class="form-group">
-          <input type="text" name="nome" class="form-control" placeholder="Nome" required><br>
+          <input type="text" name="nome" class="form-control" placeholder="Nome" minlength="2" maxlength="30" required><br>
 
-          <input type="text" name="cognome" class="form-control" placeholder="Cognome" required><br>
+          <input type="text" name="cognome" class="form-control" placeholder="Cognome" minlength="2" maxlength="30" required><br>
 
-          <input type="text" name="CF" class="form-control" placeholder="Codice Fiscale" required><br>
+          <input type="text" name="CF" class="form-control" placeholder="Codice Fiscale" minlength="16" maxlength="16" required><br>
 
-          <input class="form-control" id="email" name="email" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" type="email"  placeholder="Email" required><br>
+          <input class="form-control" id="email" name="email" minlength="8" maxlength="40" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" type="email"  placeholder="Email" required><br>
 
-          <input type="tel" name="telefono" class="form-control" pattern="\+?[0-9\s\-]+" placeholder="Numero di Telefono" required><br>
+          <input type="tel" name="telefono" class="form-control" minlength="9" maxlength="15" pattern="\+?[0-9\s\-]+" placeholder="Numero di Telefono" required><br>
 
-          <input type="text" name="username" class="form-control" placeholder="Username:" required><br>
+          <input type="text" name="username" class="form-control" minlength="3" maxlength="30" placeholder="Username:" required><br>
 
-          <input class="form-control" id="password" name="password" type="password" placeholder="Password" required>
+          <input class="form-control" id="password" name="password" type="password" minlength="6" maxlength="30"placeholder="Password" required>
 
-          <input class="form-control" id="confermaPassword" name="confermaPassword" type="password" placeholder="Conferma la password" oninput="this.setCustomValidity(this.value !== document.getElementById('password').value ? 'Le password non coincidono' : '')"required><br>
+          <input class="form-control" id="confermaPassword" name="confermaPassword" type="password" minlength="6" maxlength="30"placeholder="Conferma la password" oninput="this.setCustomValidity(this.value !== document.getElementById('password').value ? 'Le password non coincidono' : '')"required><br>
         </div>
 
         <button type="submit" class="btn btn-primary">Registrati</button>

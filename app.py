@@ -29,22 +29,33 @@ def home():
 def librarian():
     if request.method == 'POST':
         form_type=request.form['form_type']
-        if form_type == 'registrazione_utente':
+        if form_type == 'aggiunzione_libro':
             ISBN = request.form['ISBN']
             titolo = request.form['titolo']
             categoria = request.form['categoria']
             autori = request.form['autori']
+            riassunto = request.form['riassunto']
+
+            if db.addLibro(mysql, ISBN, titolo, categoria,autori, riassunto):
+                flash("Il libro è stato memorizzato con successo")
+                return redirect(url_for('librarian'))
+            
+            flash("Esiste già un libro con questo ISBN")
+            return redirect(url_for('librarian'))
+        
+        elif form_type == 'posizionamento_libro':
+            ISBN = request.form['ISBN']
             x = request.form['x']
             y = request.form['y']
             z = request.form['z']
-            ritorno=db.addLibro(mysql, ISBN, titolo, categoria,autori, x, y, z)
-            if ritorno==0:
+            if db.posizionaLibro(mysql, ISBN, x, y, z) == 1:
+                flash("Libro posizionato con successo")
+            elif db.posizionaLibro(mysql, ISBN, x, y, z) == 0:
                 flash("Esiste già un libro in questa posizione")
-                return redirect(url_for('librarian'))
-            elif ritorno==2:
-                flash("Il libro è stato memorizzato per la prima volta")
-            
+            else:
+                flash("ISBN inesistente")
             return redirect(url_for('librarian'))
+
         elif form_type == 'rinnovamento_tessera':
             username=request.form['username']
             if not db.rinnovaTessera(mysql, username):
