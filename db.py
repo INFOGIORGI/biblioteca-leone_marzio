@@ -182,6 +182,10 @@ def aggiungiprestito(mysql, CF, dataInizio, dataScadenza , IDL):
 
     return False #ritorno False se non esiste il CF
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5238e82 (uu)
 def get_prestiti(mysql):
     cursor = mysql.connection.cursor()
     query = """
@@ -214,15 +218,32 @@ def restituisci_prestito(mysql, data_inizio, cf, idl):
         WHERE DataInizio = %s AND CF = %s AND IDL = %s
     """
     cursor.execute(query, (data_inizio, cf, idl))
+<<<<<<< HEAD
+=======
+    query="SELECT * FROM Prestiti WHERE IDL=%s"
+    cursor=mysql.connection.cursor()
+    cursor.execute(query, (idl,))
+    risultato = cursor.fetchall()
+    ritorno=True
+    if risultato:
+        if risultato[len(risultato)-1][2]<datetime.now().date():
+            ritorno=False
+>>>>>>> 5238e82 (uu)
     query='''SELECT ISBN FROM Inventario WHERE IDL = %s'''
     cursor.execute(query, (idl,))
     ISBN=cursor.fetchall()
     if ISBN:
         query='''UPDATE Libri SET NumCopie = NumCopie+1 WHERE ISBN = %s'''
     cursor.execute(query, (ISBN[0][0],))
+<<<<<<< HEAD
+=======
+    query="UPDATE Inventario SET isAvailable = 1 WHERE IDL = %s"
+    cursor.execute(query, (idl,))
+>>>>>>> 5238e82 (uu)
     mysql.connection.commit()
     cursor.close()
-        
+
+    return ritorno
 
 
 def getIDL(mysql, x, y, z):

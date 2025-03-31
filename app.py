@@ -111,7 +111,8 @@ def restituisci():
     idl = request.form.get('IDL')
     
     # Aggiorna il prestito nel database: setta DataRestituzione a NOW()
-    db.restituisci_prestito(mysql, data_inizio, cf, idl)
+    if not db.restituisci_prestito(mysql, data_inizio, cf, idl):
+        flash("Sanzione da applicare per la tarda consegna del libro")
     return redirect(url_for('prestiti'))
 
 @app.route('/users')
@@ -183,4 +184,4 @@ def logOut():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=6969)

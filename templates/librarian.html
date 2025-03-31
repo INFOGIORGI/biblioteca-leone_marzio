@@ -81,19 +81,6 @@
         <button type="submit" class="btn btn-primary">Aggiungi Prestito</button>
     </form>
 </div>
-<div class="container mt-5">
-  <h1 class="mb-4">Consegna Libro</h1>
-
-  <form method="POST" action="{{ url_for('librarian') }}" class="mb-3">
-      <div class="form-group">
-          <input type="text" name="IDL" class="form-control" placeholder="IDL" minlength="1" maxlength="5" required><br>
-          
-          <input type="hidden" name="form_type" value="restituzione_prestito">
-        </div>
-
-      <button type="submit" class="btn btn-primary">Aggiungi Prestito</button>
-  </form>
-</div>
 
 {%else%}
 <div class="container text-center mt-5">
